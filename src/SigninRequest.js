@@ -10,7 +10,7 @@ export default class SigninRequest {
         // mandatory
         url, client_id, redirect_uri, response_type, scope, authority,
         // optional
-        data, prompt, display, max_age, ui_locales, id_token_hint, login_hint, acr_values, resource, request, request_uri
+        data, prompt, display, max_age, ui_locales, id_token_hint, login_hint, acr_values, resource, request, request_uri, sessionToken
     }) {
         if (!url) {
             Log.error("No url passed to SigninRequest");
@@ -44,13 +44,13 @@ export default class SigninRequest {
         url = UrlUtility.addQueryParam(url, "redirect_uri", redirect_uri);
         url = UrlUtility.addQueryParam(url, "response_type", response_type);
         url = UrlUtility.addQueryParam(url, "scope", scope);
-        
+
         url = UrlUtility.addQueryParam(url, "state", this.state.id);
         if (oidc) {
             url = UrlUtility.addQueryParam(url, "nonce", this.state.nonce);
         }
 
-        var optional = { prompt, display, max_age, ui_locales, id_token_hint, login_hint, acr_values, resource, request, request_uri };
+        var optional = { prompt, display, max_age, ui_locales, id_token_hint, login_hint, acr_values, resource, request, request_uri, sessionToken };
         for(let key in optional){
             if (optional[key]) {
                 url = UrlUtility.addQueryParam(url, key, optional[key]);
@@ -66,7 +66,7 @@ export default class SigninRequest {
         });
         return !!(result[0]);
     }
-    
+
     static isOAuth(response_type) {
         var result = response_type.split(/\s+/g).filter(function(item) {
             return item === "token";
