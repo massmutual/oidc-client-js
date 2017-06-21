@@ -10,7 +10,7 @@ export default class SigninRequest {
         // mandatory
         url, client_id, redirect_uri, response_type, scope, authority,
         // optional
-        data, prompt, display, max_age, ui_locales, id_token_hint, login_hint, acr_values, resource, request, request_uri, sessionToken
+        data, prompt, display, max_age, ui_locales, id_token_hint, login_hint, acr_values, resource, request, request_uri, sessionToken, nonce
     }) {
         if (!url) {
             Log.error("No url passed to SigninRequest");
@@ -37,8 +37,13 @@ export default class SigninRequest {
             throw new Error("authority");
         }
 
+        console.log("nonce: " + nonce);
+
         let oidc = SigninRequest.isOidc(response_type);
-        this.state = new SigninState({ nonce: oidc, data, client_id, authority });
+        let oidc_nonce = nonce || oidc;
+
+        console.log("oidc_nonce: " + oidc_nonce);
+        this.state = new SigninState({ nonce: oidc_nonce, data, client_id, authority });
 
         url = UrlUtility.addQueryParam(url, "client_id", client_id);
         url = UrlUtility.addQueryParam(url, "redirect_uri", redirect_uri);
